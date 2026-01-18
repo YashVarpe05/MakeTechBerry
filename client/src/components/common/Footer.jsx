@@ -172,7 +172,7 @@ export default function App() {
             <div className="flex items-center">
               <a href="/" className={`flex items-center gap-3 text-2xl font-black transition-colors duration-500 text-indigo-900 ${themeClasses.brandLogoText}`}>
                <img
-  src="/images/logo-no_bg-removebg-preview.png"
+  src="/images/logo.png"
   alt="MakeTechBerry Logo"
   className="h-10 w-auto"
 />

@@ -1,11 +1,12 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/common/Navbar";
-import Footer from "./components/Footer";
+import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
+
 
 function AppContent() {
   const location = useLocation();
