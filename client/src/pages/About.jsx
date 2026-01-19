@@ -29,19 +29,19 @@ const About = () => {
       title: "Our Story",
       icon: <Map className="text-orange-500" size={24} />,
       content:
-        "At KaliIO, we embark on a journey fueled by innovation and a relentless passion for technology. Founded with a vision to redefine possibilities."
+        "MakeTechBerry LLP was founded in 2025 with a vision to bridge the gap between Academic learning and industry requirements. As a fresh startup based in Pune,Maharashtra, we bring innovative approaches to tech education."
     },
     {
       title: "Mission",
       icon: <CreditCard className="text-indigo-600" size={24} />,
       content:
-        "Our mission is to empower businesses and individuals with cutting-edge solutions and practical, real-world skills."
+        "To empower students and professionals with real-world skills, while delivering innovative, reliable, and affordable technology solutions."
     },
     {
       title: "Vision",
       icon: <Plane className="text-emerald-500" size={24} />,
       content:
-        "We envision a future where technology seamlessly integrates with human life, making possibilities boundless."
+        "To become a trusted name in technology-driven learning, research, and development, shaping future-ready professionals."
     }
   ];
 
