@@ -231,7 +231,7 @@ const About = () => {
 
       {/* Footer Decoration */}
       <div className="py-12 md:py-20 flex justify-center opacity-10 grayscale select-none">
-         <div className="text-2xl md:text-3xl font-black tracking-tighter">K ALIIO</div>
+         <div className="text-2xl md:text-3xl font-black tracking-tighter">FURTHER CONTENT</div>
       </div>
     </div>
     </AnimatedBackground>
