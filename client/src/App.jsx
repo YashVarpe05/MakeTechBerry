@@ -3,13 +3,13 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Register from "./pages/Register";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import Internships from "./pages/admin/Internships";
 import Projects from "./pages/admin/Projects";
 import Reports from "./pages/admin/Reports";
+import Contact from "./pages/Contact";
 
 function AppContent() {
 	const location = useLocation();
@@ -18,11 +18,11 @@ function AppContent() {
 	return (
 		<div className={isAdminPage ? "min-h-screen" : "bg-[#E7DEFE] min-h-screen"}>
 			{!isAdminPage && <Navbar />}
-
+		
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/about" element={<About />} />
 				<Route path="/register" element={<Register />} />
+				<Route path="/contact" element={<Contact />} />
 				<Route path="/admin/login" element={<Login />} />
 				<Route
 					path="/admin/dashboard"
