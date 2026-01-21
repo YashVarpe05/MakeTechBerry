@@ -1,8 +1,60 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send, ChevronDown } from "lucide-react";
+import { sendContactMessage } from "../services/contact.service.js";
+import { useToast } from "../hooks/useToast.js";
+import Toast from "../components/forms/Toast.jsx";
 
 const Contact = () => {
   const [openFaq, setOpenFaq] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast, showToast, hideToast } = useToast();
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { fullName, email, phone, subject, message } = formData;
+
+    if (!fullName || !email || !phone || !subject || !message) {
+      showToast("Please fill out all fields before sending.", "error");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await sendContactMessage({
+        fullName,
+        email,
+        phone,
+        subject,
+        message,
+      });
+      showToast("Message sent! We'll get back to you soon.", "success");
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      const errorMessage =
+        error?.response?.data?.message || "Failed to send message. Please try again.";
+      showToast(errorMessage, "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const faqs = [
     {
@@ -48,7 +100,7 @@ const Contact = () => {
             {/* divider line */}
             <div className="mt-6 h-[1px] w-full bg-gray-100" />
 
-            <form className="mt-6 space-y-5">
+            <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
               {/* Name + Email */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -56,8 +108,12 @@ const Contact = () => {
                     Full Name
                   </label>
                   <input
+                    name="fullName"
                     type="text"
                     placeholder="Enter your name"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
                     className="mt-2 w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-purple-200"
                   />
                 </div>
@@ -67,8 +123,12 @@ const Contact = () => {
                     Email Address
                   </label>
                   <input
+                    name="email"
                     type="email"
                     placeholder="example@gmail.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     className="mt-2 w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-purple-200"
                   />
                 </div>
@@ -80,8 +140,12 @@ const Contact = () => {
                   Phone Number
                 </label>
                 <input
+                  name="phone"
                   type="text"
                   placeholder="+91 XXXXX XXXXX"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
                   className="mt-2 w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-purple-200"
                 />
               </div>
@@ -92,8 +156,12 @@ const Contact = () => {
                   Subject
                 </label>
                 <input
+                  name="subject"
                   type="text"
                   placeholder="Internship / Project / Collaboration"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
                   className="mt-2 w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-purple-200"
                 />
               </div>
@@ -104,18 +172,23 @@ const Contact = () => {
                   Message
                 </label>
                 <textarea
+                  name="message"
                   rows="5"
                   placeholder="Write your message here..."
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                   className="mt-2 w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white outline-none focus:ring-2 focus:ring-purple-200 resize-none"
                 />
               </div>
 
               {/* Button */}
               <button
-                type="button"
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-purple-600 text-white font-bold shadow-md hover:bg-purple-700 transition-all"
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-purple-600 text-white font-bold shadow-md hover:bg-purple-700 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Send Message <Send size={18} />
+                {isSubmitting ? "Sending..." : "Send Message"} <Send size={18} />
               </button>
 
               {/* Small helper text (optional) */}
@@ -240,6 +313,14 @@ const Contact = () => {
           </div>
         </div>
       </section>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={hideToast}
+        />
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     { icon: Users, label: "Internships", path: "/admin/internships", active: true },
     { icon: Briefcase, label: "Projects", path: "/admin/projects", active: false },
     { icon: FileText, label: "Reports", path: "/admin/reports", active: false },
+    { icon: Mail, label: "Messages", path: "/admin/messages", active: false },
   ];
 
   const handleLogout = () => {
