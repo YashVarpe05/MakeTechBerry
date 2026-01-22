@@ -2,6 +2,7 @@
 
 @plugin "tailwindcss-animate";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Volkhov:wght@700&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -10,11 +11,17 @@
 body {
   background-color: #E7DEFE;
   min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
 }
 
 #root {
   background-color: #E7DEFE;
   min-height: 100vh;
+}
+
+/* Volkhov for headings */
+.font-volkhov {
+  font-family: 'Volkhov', serif;
 }
 
 /* Smooth Navbar Animations */
