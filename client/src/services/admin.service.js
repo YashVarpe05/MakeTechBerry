@@ -103,3 +103,19 @@ export const deleteReport = (id, token) => {
     }
   });
 };
+
+export const getMessages = (token) => {
+  return api.get("/messages", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+export const deleteMessage = (id, token) => {
+  return api.delete(`/messages/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};

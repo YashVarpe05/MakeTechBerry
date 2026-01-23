@@ -3,13 +3,16 @@ import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Register from "./pages/Register";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import Internships from "./pages/admin/Internships";
 import Projects from "./pages/admin/Projects";
 import Reports from "./pages/admin/Reports";
+import Services from "./pages/Services";
+import Messages from "./pages/admin/Messages";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
 
 function AppContent() {
 	const location = useLocation();
@@ -21,8 +24,10 @@ function AppContent() {
 
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route path="/about" element={<About />} />
+				<Route path="/services" element={<Services />} />
 				<Route path="/register" element={<Register />} />
+				<Route path="/about" element={<About />} />
+				<Route path="/contact" element={<Contact />} />
 				<Route path="/admin/login" element={<Login />} />
 				<Route
 					path="/admin/dashboard"
@@ -53,6 +58,14 @@ function AppContent() {
 					element={
 						<ProtectedRoute>
 							<Reports />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin/messages"
+					element={
+						<ProtectedRoute>
+							<Messages />
 						</ProtectedRoute>
 					}
 				/>
