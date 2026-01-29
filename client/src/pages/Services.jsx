@@ -25,7 +25,8 @@ const ServiceIcon = ({ icon: Icon, gradient }) => (
 	</div>
 );
 
-const servicesContent = [
+// Development Services Content
+const developmentContent = [
 	{
 		title: "Mobile Application Development",
 		description:
@@ -81,6 +82,10 @@ const servicesContent = [
 			/>
 		),
 	},
+];
+
+// Engineering Excellence Content
+const engineeringContent = [
 	{
 		title: "Civil Engineering Projects",
 		description:
@@ -205,25 +210,53 @@ const Services = () => {
 							</p>
 						</div>
 
-						{/* Sticky Scroll Component */}
-						<StickyScroll
-							content={servicesContent}
-							contentClassName="rounded-[24px] shadow-2xl"
-						/>
+						{/* Sticky Scroll Component with hidden scrollbar */}
+						<div className="development-scroll-container">
+							<style>{`
+								.development-scroll-container > div {
+									scrollbar-width: none;
+									-ms-overflow-style: none;
+								}
+								.development-scroll-container > div::-webkit-scrollbar {
+									display: none;
+								}
+							`}</style>
+							<StickyScroll
+								content={developmentContent}
+								contentClassName="rounded-[24px] shadow-2xl"
+							/>
+						</div>
 
-						{/* Engineering Section Note */}
-						<div className="mt-12 bg-white/60 backdrop-blur-sm rounded-[24px] p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] border border-purple-100">
-							<div className="flex items-center gap-3 mb-4">
+						{/* Engineering Excellence Header */}
+						<div className="mt-12 mb-8">
+							<div className="flex items-center gap-3 mb-2">
 								<div className="h-1 w-12 bg-[#DF6951] rounded-full" />
 								<span className="text-[#DF6951] font-semibold uppercase tracking-wider text-sm">
 									Engineering Excellence
 								</span>
 							</div>
-							<p className="text-[#5E6282] max-w-2xl">
+							<p className="text-[#5E6282] max-w-2xl text-sm">
 								Beyond software, we bring technical expertise to complex
 								engineering challenges across Civil, Mechanical,
 								Instrumentation, Mechatronics, and Embedded Systems.
 							</p>
+						</div>
+
+						{/* Engineering Sticky Scroll Component with hidden scrollbar */}
+						<div className="engineering-scroll-container">
+							<style>{`
+								.engineering-scroll-container > div {
+									scrollbar-width: none;
+									-ms-overflow-style: none;
+								}
+								.engineering-scroll-container > div::-webkit-scrollbar {
+									display: none;
+								}
+							`}</style>
+							<StickyScroll
+								content={engineeringContent}
+								contentClassName="rounded-[24px] shadow-2xl"
+							/>
 						</div>
 					</div>
 				</section>
