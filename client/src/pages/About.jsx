@@ -83,7 +83,7 @@ const TestimonialCard = ({ quote, name, role, image, highlights, index }) => {
 /**
  * FoundingMemberCard Component
  */
-const FoundingMemberCard = ({ initials, name, role, phone, delay }) => {
+const FoundingMemberCard = ({ initials, name, role, phone, delay, linkedinURL }) => {
   const [isHovered, setIsHovered] = useState(false);
   const color = {
     bg: "bg-[#E7DEFE]",
@@ -139,11 +139,16 @@ const FoundingMemberCard = ({ initials, name, role, phone, delay }) => {
               Pune, India
             </p>
           </div>
-          <button className="w-full mt-4 py-4 px-6 bg-[#ddd0fe] text-white font-bold rounded-2xl shadow-lg flex items-center justify-center gap-2 group/btn hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+          <a
+            href={linkedinURL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full mt-4 py-4 px-6 bg-[#ddd0fe] text-white font-bold rounded-2xl shadow-lg flex items-center justify-center gap-2 group/btn hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+          >
             <span className="text-[#9062FF]">View Profile</span>
 
             <ArrowUpRight className="w-4 h-4 text-[#9062FF] group-hover/btn:text-[#7A4DFF] transition-all" />
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -250,24 +255,27 @@ const AboutPage = () => {
   const members = [
     {
       initials: "MM",
-      name: "Malhar Malavade",
-      role: "Tech Lead",
-      phone: "+91 80871 05728",
+      name: "Janhvi Katakdhond",
+      role: "TECH LEAD",
+      phone: "+91 76205 95075",
       delay: 0.1,
+      linkedinURL: "https://www.linkedin.com/in/janhvi-katakdhond-870614264?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
     },
     {
       initials: "PS",
-      name: "Pranav Shinde",
-      role: "Strategy Lead",
-      phone: "+91 91455 98468",
+      name: "Geet (Malhar) Malavade",
+      role: "FINANCE HEAD",
+      phone: " +91 80871 05728",
       delay: 0.2,
+      linkedinURL: " https://www.linkedin.com/in/geet-malavade-38b9b22a7?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
     },
     {
       initials: "JK",
-      name: "Janhvi Katakdhond",
-      role: "Operations Lead",
-      phone: "+91 76205 95075",
+      name: "Pranav Shinde",
+      role: "OPERATION HEAD",
+      phone: "+91 91455 98468",
       delay: 0.3,
+      linkedinURL: " https://www.linkedin.com/in/pranav-shinde-b68230283?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
     },
   ];
 
