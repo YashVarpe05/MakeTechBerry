@@ -90,14 +90,14 @@ export default function App() {
 								<SocialIcon href="/" bgColor="bg-blue-400" ariaLabel="Email">
 									<Mail size={18} />
 								</SocialIcon>
-
+{/* 
 								<SocialIcon href="/" bgColor="bg-black" ariaLabel="X">
 									<Twitter size={18} fill="currentColor" />
-								</SocialIcon>
+								</SocialIcon> */}
 
-								<SocialIcon href="/" bgColor="bg-[#5865F2]" ariaLabel="Discord">
+								{/* <SocialIcon href="/" bgColor="bg-[#5865F2]" ariaLabel="Discord">
 									<Disc size={18} />
-								</SocialIcon>
+								</SocialIcon> */}
 
 								<SocialIcon
 									href="/"
