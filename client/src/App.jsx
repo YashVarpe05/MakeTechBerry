@@ -9,6 +9,7 @@ import Dashboard from "./pages/admin/Dashboard";
 import Internships from "./pages/admin/Internships";
 import ProjectProposals from "./pages/admin/ProjectProposals";
 import Projects from "./pages/admin/Projects";
+import AdminWorkshops from "./pages/admin/Workshops";
 import Reports from "./pages/admin/Reports";
 import Services from "./pages/Services";
 import Project from "./pages/Project";
@@ -63,6 +64,14 @@ function AppContent() {
 					element={
 						<ProtectedRoute>
 							<Projects />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin/workshops"
+					element={
+						<ProtectedRoute>
+							<AdminWorkshops />
 						</ProtectedRoute>
 					}
 				/>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Users, Briefcase, TrendingUp, FileText, ClipboardList, ChevronRight, Search, Download, Filter, Calendar, Mail, Phone, MapPin, ExternalLink, Clock, LogOut } from "lucide-react";
+import { Menu, X, Users, Briefcase, TrendingUp, FileText, ClipboardList, ChevronRight, Search, Download, Filter, Calendar, Mail, Phone, MapPin, ExternalLink, Clock, LogOut, BookOpen } from "lucide-react";
 import { getInternships, getProjects } from "../../services/admin.service.js";
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
@@ -10,6 +10,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     { icon: Users, label: "Internships", path: "/admin/internships", active: false },
     { icon: ClipboardList, label: "Project Proposals", path: "/admin/project-proposals", active: false },
     { icon: Briefcase, label: "Projects", path: "/admin/projects", active: false },
+    { icon: BookOpen, label: "Workshops", path: "/admin/workshops", active: false },
     { icon: FileText, label: "Reports", path: "/admin/reports", active: false },
     { icon: Mail, label: "Messages", path: "/admin/messages", active: false },
   ];
