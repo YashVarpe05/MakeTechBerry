@@ -169,3 +169,40 @@ export const changeShowcaseProjectStatus = (id, status, token) => {
     }
   });
 };
+
+// ========== WORKSHOP SERVICES ==========
+
+export const getWorkshops = (status = null, category = null) => {
+  let url = "/workshops?";
+  if (status) url += `status=${status}&`;
+  if (category && category !== 'All') url += `category=${category}`;
+  return api.get(url);
+};
+
+export const getWorkshop = (id) => {
+  return api.get(`/workshops/${id}`);
+};
+
+export const createWorkshop = (data, token) => {
+  return api.post("/workshops", data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+export const updateWorkshop = (id, data, token) => {
+  return api.put(`/workshops/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
+export const deleteWorkshop = (id, token) => {
+  return api.delete(`/workshops/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
