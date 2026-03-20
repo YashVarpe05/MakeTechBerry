@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, FileText, TrendingUp, Users, Briefcase, ClipboardList, ChevronRight, Search, Filter, Calendar, Mail, Phone, Clock, LogOut, GraduationCap, Building2, DollarSign, Calendar as CalendarIcon, Code, CheckCircle, XCircle, Download, ExternalLink, Trash2 } from "lucide-react";
+import { Menu, X, FileText, TrendingUp, Users, Briefcase, ClipboardList, ChevronRight, Search, Filter, Calendar, Mail, Phone, Clock, LogOut, GraduationCap, Building2, DollarSign, Calendar as CalendarIcon, Code, CheckCircle, XCircle, Download, ExternalLink, Trash2, BookOpen } from "lucide-react";
 import { getReports, getReportsByType, getReportsByAction, deleteReport } from "../../services/admin.service.js";
 import { useToast } from "../../hooks/useToast.js";
 import Toast from "../../components/forms/Toast.jsx";

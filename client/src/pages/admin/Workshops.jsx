@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Menu, X, Briefcase, TrendingUp, FileText, ClipboardList, ChevronRight, Search, Filter,
-  Calendar, Mail, Phone, Clock, LogOut, Trash2, Code, Users, CheckCircle,
-  XCircle, Plus, Edit2, Save, X as XIcon, Tag, Image as ImageIcon
+  Menu, X, BookOpen, TrendingUp, Briefcase, FileText, ClipboardList, ChevronRight, Search, Filter,
+  Calendar, Mail, LogOut, Trash2, Code, Users, Plus, Edit2, Save, X as XIcon, Image as ImageIcon
 } from "lucide-react";
 import { 
-  getShowcaseProjects, 
-  createShowcaseProject, 
-  updateShowcaseProject, 
-  deleteShowcaseProject, 
-  changeShowcaseProjectStatus 
+  getWorkshops, 
+  createWorkshop, 
+  updateWorkshop, 
+  deleteWorkshop
 } from "../../services/admin.service.js";
 import { useToast } from "../../hooks/useToast.js";
 import Toast from "../../components/forms/Toast.jsx";
@@ -21,8 +19,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     { icon: TrendingUp, label: "Dashboard", path: "/admin/dashboard", active: false },
     { icon: Users, label: "Internships", path: "/admin/internships", active: false },
     { icon: ClipboardList, label: "Project Proposals", path: "/admin/project-proposals", active: false },
-    { icon: Briefcase, label: "Projects", path: "/admin/projects", active: true },
-    { icon: BookOpen, label: "Workshops", path: "/admin/workshops", active: false },
+    { icon: Briefcase, label: "Projects", path: "/admin/projects", active: false },
+    { icon: BookOpen, label: "Workshops", path: "/admin/workshops", active: true },
     { icon: FileText, label: "Reports", path: "/admin/reports", active: false },
     { icon: Mail, label: "Messages", path: "/admin/messages", active: false },
   ];
@@ -130,24 +128,29 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
   );
 };
 
-const Projects = () => {
-  const [projects, setProjects] = useState([]);
+const AdminWorkshops = () => {
+  const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterCategory, setFilterCategory] = useState("all");
   const [deletingId, setDeletingId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  
   const [formData, setFormData] = useState({
-    projectTitle: "",
-    projectDescription: "",
-    techStack: "",
-    status: "ongoing",
-    teamMembers: "",
-    role: "",
-    featuredImage: ""
+    title: "",
+    category: "Development",
+    date: "",
+    duration: "",
+    location: "",
+    description: "",
+    instructor: "",
+    capacity: 50,
+    tags: "",
+    status: "Upcoming",
+    image: ""
   });
 
   const token = localStorage.getItem("adminToken");
@@ -159,18 +162,17 @@ const Projects = () => {
       navigate("/admin/login");
       return;
     }
-
-    fetchProjects();
+    fetchWorkshops();
   }, [token, navigate]);
 
-  const fetchProjects = async () => {
+  const fetchWorkshops = async () => {
     try {
       setLoading(true);
-      const projectsRes = await getShowcaseProjects(token);
-      setProjects(projectsRes.data.data || []);
+      const res = await getWorkshops();
+      setWorkshops(res.data.data || []);
     } catch (error) {
-      console.error("Failed to fetch projects:", error);
-      showToast("Failed to fetch projects. Please try again.", "error");
+      console.error("Failed to fetch workshops:", error);
+      showToast("Failed to fetch workshops. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -178,13 +180,17 @@ const Projects = () => {
 
   const resetForm = () => {
     setFormData({
-      projectTitle: "",
-      projectDescription: "",
-      techStack: "",
-      status: "ongoing",
-      teamMembers: "",
-      role: "",
-      featuredImage: ""
+      title: "",
+      category: "Development",
+      date: "",
+      duration: "",
+      location: "",
+      description: "",
+      instructor: "",
+      capacity: 50,
+      tags: "",
+      status: "Upcoming",
+      image: ""
     });
     setEditingId(null);
     setShowAddForm(false);
@@ -195,22 +201,26 @@ const Projects = () => {
     setShowAddForm(true);
   };
 
-  const handleEdit = (project) => {
+  const handleEdit = (workshop) => {
     setFormData({
-      projectTitle: project.projectTitle || "",
-      projectDescription: project.projectDescription || "",
-      techStack: project.techStack || "",
-      status: project.status || "ongoing",
-      teamMembers: Array.isArray(project.teamMembers) ? project.teamMembers.join(", ") : "",
-      role: project.role || "",
-      featuredImage: project.featuredImage || ""
+      title: workshop.title || "",
+      category: workshop.category || "Development",
+      date: workshop.date || "",
+      duration: workshop.duration || "",
+      location: workshop.location || "",
+      description: workshop.description || "",
+      instructor: workshop.instructor || "",
+      capacity: workshop.capacity || 50,
+      tags: Array.isArray(workshop.tags) ? workshop.tags.join(", ") : "",
+      status: workshop.status || "Upcoming",
+      image: workshop.image || ""
     });
-    setEditingId(project._id);
+    setEditingId(workshop._id);
     setShowAddForm(true);
   };
 
   const handleSave = async () => {
-    if (!formData.projectTitle || !formData.projectDescription || !formData.techStack) {
+    if (!formData.title || !formData.date || !formData.description) {
       showToast("Please fill in all required fields.", "error");
       return;
     }
@@ -218,85 +228,60 @@ const Projects = () => {
     try {
       const dataToSend = {
         ...formData,
-        teamMembers: formData.teamMembers
-          ? formData.teamMembers.split(",").map(m => m.trim()).filter(m => m)
+        tags: formData.tags
+          ? formData.tags.split(",").map(t => t.trim()).filter(t => t)
           : []
       };
 
       if (editingId) {
-        await updateShowcaseProject(editingId, dataToSend, token);
-        showToast("Project updated successfully!", "success");
+        await updateWorkshop(editingId, dataToSend, token);
+        showToast("Workshop updated successfully!", "success");
       } else {
-        await createShowcaseProject(dataToSend, token);
-        showToast("Project created successfully!", "success");
+        await createWorkshop(dataToSend, token);
+        showToast("Workshop created successfully!", "success");
       }
 
       resetForm();
-      fetchProjects();
+      fetchWorkshops();
     } catch (error) {
-      console.error("Failed to save project:", error);
-      showToast(`Failed to ${editingId ? 'update' : 'create'} project. Please try again.`, "error");
+      console.error("Failed to save workshop:", error);
+      showToast(`Failed to ${editingId ? 'update' : 'create'} workshop. Please try again.`, "error");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
+    if (!window.confirm("Are you sure you want to delete this workshop?")) {
       return;
     }
 
     setDeletingId(id);
     try {
-      await deleteShowcaseProject(id, token);
-      setProjects(projects.filter(project => project._id !== id));
-      showToast("Project deleted successfully!", "success");
+      await deleteWorkshop(id, token);
+      setWorkshops(workshops.filter(w => w._id !== id));
+      showToast("Workshop deleted successfully!", "success");
     } catch (error) {
-      console.error("Failed to delete project:", error);
-      showToast("Failed to delete project. Please try again.", "error");
+      console.error("Failed to delete workshop:", error);
+      showToast("Failed to delete workshop.", "error");
     } finally {
       setDeletingId(null);
     }
   };
 
-  const handleStatusChange = async (id, newStatus) => {
-    try {
-      await changeShowcaseProjectStatus(id, newStatus, token);
-      setProjects(projects.map(project => 
-        project._id === id ? { ...project, status: newStatus } : project
-      ));
-      showToast("Project status updated successfully!", "success");
-    } catch (error) {
-      console.error("Failed to change status:", error);
-      showToast("Failed to update project status. Please try again.", "error");
-    }
-  };
-
-  const filteredProjects = projects.filter((project) => {
+  const filteredWorkshops = workshops.filter((workshop) => {
     const matchesSearch =
-      project.projectTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.projectDescription?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.techStack?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || project.status?.toLowerCase() === filterStatus.toLowerCase();
-    return matchesSearch && matchesStatus;
+      workshop.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      workshop.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      workshop.instructor?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      filterCategory === "all" || workshop.category?.toLowerCase() === filterCategory.toLowerCase();
+    return matchesSearch && matchesCategory;
   });
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric'
-    });
-  };
-
   const getStatusColor = (status) => {
-    const statusLower = status?.toLowerCase();
-    if (statusLower === "completed") {
-      return "bg-green-100 text-green-700";
-    } else {
-      return "bg-orange-100 text-orange-700";
-    }
+    const s = status?.toLowerCase();
+    if (s === "open" || s === "completed") return "bg-green-100 text-green-700";
+    if (s === "closed") return "bg-red-100 text-red-700";
+    return "bg-blue-100 text-blue-700";
   };
 
   if (loading) {
@@ -304,7 +289,7 @@ const Projects = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-16 h-16 border-4 border-[#9062FF] border-t-[#9062FF] border-opacity-30 rounded-full animate-spin"></div>
-          <p className="text-gray-600 font-medium">Loading projects...</p>
+          <p className="text-gray-600 font-medium">Loading workshops...</p>
         </div>
       </div>
     );
@@ -334,16 +319,10 @@ const Projects = () => {
         <div className="flex items-center justify-between animate-slide-down flex-wrap gap-4 mt-12 lg:mt-0">
           <div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-black from-black via-[#9062FF] to-[#c9a7ff] bg-clip-text text-transparent">
-              Showcase Projects
+              Workshops Management
             </h1>
             <p className="text-gray-600 mt-2 flex items-center gap-2 text-sm sm:text-base">
-              <Calendar className="w-4 h-4" />
-              <span className="hidden sm:inline">
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-              </span>
-              <span className="sm:hidden">
-                {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
+              Manage MakeTechBerry public workshops.
             </p>
           </div>
           <button
@@ -351,137 +330,186 @@ const Projects = () => {
             className="flex items-center gap-2 px-4 py-2 bg-[#9062FF] text-white rounded-lg hover:bg-[#7c52e6] transition-all duration-200 font-medium shadow-md"
           >
             <Plus className="w-5 h-5" />
-            <span>Add Project</span>
+            <span>Add Workshop</span>
           </button>
         </div>
 
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 animate-slide-up">
           <div className="flex items-center justify-between mb-4">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#9062FF] rounded-xl flex items-center justify-center">
-              <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">Total</span>
           </div>
-          <p className="text-gray-600 text-xs sm:text-sm font-medium">Total Projects</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mt-2">{projects.length}</h2>
+          <p className="text-gray-600 text-xs sm:text-sm font-medium">Total Workshops</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-black mt-2">{workshops.length}</h2>
         </div>
 
         {showAddForm && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 animate-slide-up">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-black">
-                {editingId ? "Edit Project" : "Add New Project"}
+                {editingId ? "Edit Workshop" : "Add New Workshop"}
               </h2>
-              <button
-                onClick={resetForm}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+              <button onClick={resetForm} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <XIcon className="w-5 h-5 text-gray-600" />
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
+            <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Project Title <span className="text-red-500">*</span>
+                  Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={formData.projectTitle}
-                  onChange={(e) => setFormData({ ...formData, projectTitle: e.target.value })}
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  placeholder="Enter project title"
+                  placeholder="e.g., Full-Stack React Bootcamp"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="e.g., Development"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date
+                </label>
+                <input
+                  type="text"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="e.g., Aug 12-14, 2026"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Duration
+                </label>
+                <input
+                  type="text"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="e.g., 16 Hours"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="e.g., Virtual & Mentorship"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  value={formData.projectDescription}
-                  onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  placeholder="Enter project description"
+                  placeholder="Enter detailed workshop description..."
                   rows="4"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tech Stack <span className="text-red-500">*</span>
+                  Instructor
                 </label>
                 <input
                   type="text"
-                  value={formData.techStack}
-                  onChange={(e) => setFormData({ ...formData, techStack: e.target.value })}
+                  value={formData.instructor}
+                  onChange={(e) => setFormData({ ...formData, instructor: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  placeholder="e.g., React, Node.js, MongoDB"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  >
-                    <option value="ongoing">Ongoing</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Role
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.role}
-                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                    placeholder="e.g., Full-stack Developer"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Team Members (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  value={formData.teamMembers}
-                  onChange={(e) => setFormData({ ...formData, teamMembers: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  placeholder="e.g., John Doe, Jane Smith"
+                  placeholder="Instructor Name"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Featured Image URL
+                  Capacity
                 </label>
                 <input
-                  type="text"
-                  value={formData.featuredImage}
-                  onChange={(e) => setFormData({ ...formData, featuredImage: e.target.value })}
+                  type="number"
+                  value={formData.capacity}
+                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
-                  placeholder="https://example.com/image.jpg"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                >
+                  <option value="Upcoming">Upcoming</option>
+                  <option value="Registration Opening Soon">Registration Opening Soon</option>
+                  <option value="Open">Open</option>
+                  <option value="Closed">Closed</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tags (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={formData.tags}
+                  onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="React, Next.js, Web"
+                />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Image URL
+                </label>
+                <input
+                  type="text"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
+                  placeholder="https://images.unsplash.com/..."
+                />
+              </div>
+
+              <div className="md:col-span-2 flex gap-3 pt-4 border-t border-gray-100">
                 <button
                   onClick={handleSave}
                   className="flex items-center gap-2 px-6 py-2 bg-[#9062FF] text-white rounded-lg hover:bg-[#7c52e6] transition-all duration-200 font-medium"
                 >
                   <Save className="w-4 h-4" />
-                  {editingId ? "Update Project" : "Create Project"}
+                  {editingId ? "Update Workshop" : "Create Workshop"}
                 </button>
                 <button
                   onClick={resetForm}
@@ -500,57 +528,59 @@ const Projects = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search projects..."
+                placeholder="Search workshops..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF] focus:border-transparent"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF]"
               />
             </div>
             <div className="relative w-full sm:min-w-[200px]">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
               <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF] focus:border-transparent appearance-none bg-white"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9062FF] appearance-none bg-white"
               >
-                <option value="all">All Statuses</option>
-                <option value="ongoing">Ongoing</option>
-                <option value="completed">Completed</option>
+                <option value="all">All Categories</option>
+                <option value="Development">Development</option>
+                <option value="Design">Design</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Infrastructure">Infrastructure</option>
               </select>
             </div>
           </div>
         </div>
 
         <div className="space-y-4 sm:space-y-6">
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project, index) => (
+          {filteredWorkshops.length > 0 ? (
+            filteredWorkshops.map((workshop, index) => (
               <div
-                key={project._id}
+                key={workshop._id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-all duration-300 animate-slide-up"
                 style={{ animationDelay: `${0.1 * index}s` }}
               >
                 <div className="flex items-start justify-between mb-4 flex-wrap gap-4">
                   <div className="flex items-center gap-3 sm:gap-4">
                     <div className="w-12 h-12 sm:w-16 sm:h-16 bg-[#9062FF] rounded-xl flex items-center justify-center shadow-sm">
-                      <Briefcase className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                      <BookOpen className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl sm:text-2xl font-bold text-black mb-1">{project.projectTitle || "N/A"}</h3>
-                      <p className="text-sm text-gray-500">{formatDate(project.createdAt)}</p>
+                      <h3 className="text-xl sm:text-2xl font-bold text-black mb-1">{workshop.title}</h3>
+                      <p className="text-sm text-gray-500">{workshop.date}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(project.status)}`}>
-                      {project.status === "completed" ? "Completed" : "Ongoing"}
+                    <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor(workshop.status)}`}>
+                      {workshop.status}
                     </span>
                   </div>
                 </div>
 
-                {project.featuredImage && (
+                {workshop.image && (
                   <div className="mb-4">
                     <img 
-                      src={project.featuredImage} 
-                      alt={project.projectTitle}
+                      src={workshop.image} 
+                      alt={workshop.title}
                       className="w-full h-48 object-cover rounded-xl"
                       onError={(e) => e.target.style.display = 'none'}
                     />
@@ -558,159 +588,72 @@ const Projects = () => {
                 )}
 
                 <div className="mb-4">
-                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed">{project.projectDescription || "N/A"}</p>
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed">{workshop.description}</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4">
                   <div className="flex items-start gap-3">
                     <Code className="w-5 h-5 text-[#9062FF] flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-500 font-medium mb-1">Tech Stack</p>
-                      <p className="text-sm sm:text-base text-gray-800 font-medium">{project.techStack || "N/A"}</p>
+                      <p className="text-xs text-gray-500 font-medium mb-1">Category & Tags</p>
+                      <p className="text-sm sm:text-base text-gray-800 font-medium">
+                        {workshop.category} | {Array.isArray(workshop.tags) ? workshop.tags.join(", ") : ""}
+                      </p>
                     </div>
                   </div>
 
-                  {project.role && (
-                    <div className="flex items-start gap-3">
-                      <Users className="w-5 h-5 text-[#9062FF] flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-gray-500 font-medium mb-1">Role</p>
-                        <p className="text-sm sm:text-base text-gray-800 font-medium">{project.role}</p>
-                      </div>
+                  <div className="flex items-start gap-3">
+                    <Users className="w-5 h-5 text-[#9062FF] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium mb-1">Instructor</p>
+                      <p className="text-sm sm:text-base text-gray-800 font-medium">{workshop.instructor}</p>
                     </div>
-                  )}
-
-                  {project.teamMembers && project.teamMembers.length > 0 && (
-                    <div className="flex items-start gap-3">
-                      <Users className="w-5 h-5 text-[#9062FF] flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-gray-500 font-medium mb-1">Team Members</p>
-                        <p className="text-sm sm:text-base text-gray-800 font-medium">
-                          {Array.isArray(project.teamMembers) ? project.teamMembers.join(", ") : project.teamMembers}
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-3 pt-4 border-t border-gray-200 flex-wrap">
                   <button
-                    onClick={() => handleEdit(project)}
+                    onClick={() => handleEdit(workshop)}
                     className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-200 font-medium text-sm"
                   >
                     <Edit2 className="w-4 h-4" />
                     <span>Edit</span>
                   </button>
                   <button
-                    onClick={() => handleStatusChange(project._id, project.status === "ongoing" ? "completed" : "ongoing")}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-all duration-200 font-medium text-sm"
+                    onClick={() => handleDelete(workshop._id)}
+                    disabled={deletingId === workshop._id}
+                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200 font-medium text-sm disabled:opacity-50"
                   >
-                    <Tag className="w-4 h-4" />
-                    <span>Mark as {project.status === "ongoing" ? "Completed" : "Ongoing"}</span>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(project._id)}
-                    disabled={deletingId === project._id}
-                    className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all duration-200 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {deletingId === project._id ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
-                        <span>Deleting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 className="w-4 h-4" />
-                        <span>Delete</span>
-                      </>
-                    )}
+                    {deletingId === workshop._id ? "Deleting..." : "Delete"}
                   </button>
                 </div>
               </div>
             ))
           ) : (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 sm:p-12 text-center animate-slide-up">
-              <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-500 text-lg font-medium">
-                {searchTerm || filterStatus !== "all"
-                  ? "No results found. Try adjusting your filters."
-                  : "No projects yet. Click 'Add Project' to create one."}
+                No workshops found. Click 'Add Workshop' to create one.
               </p>
             </div>
           )}
         </div>
-
-        {filteredProjects.length > 0 && (
-          <div className="text-sm text-gray-600 text-center pb-4">
-            Showing {filteredProjects.length} of {projects.length} projects
-          </div>
-        )}
       </div>
 
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={hideToast}
-        />
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} onClose={hideToast} />}
 
       <style>{`
-        @keyframes slide-down {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        .animate-slide-down {
-          animation: slide-down 0.6s ease-out;
-        }
-
-        .animate-slide-up {
-          animation: slide-up 0.6s ease-out;
-          animation-fill-mode: both;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
+        @keyframes slide-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-slide-down { animation: slide-down 0.6s ease-out; }
+        .animate-slide-up { animation: slide-up 0.6s ease-out; animation-fill-mode: both; }
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
       `}</style>
     </div>
   );
 };
 
-export default Projects;
+export default AdminWorkshops;
