@@ -6,6 +6,7 @@ import internshipRoutes from "./routes/internship.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import workshopRoutes from "./routes/workshop.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.routes.js";
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use("/api/internships", internshipRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/workshops", workshopRoutes);
 // Messages (contact form)
 // Note: we mount the router AND also wire explicit handlers to avoid
 // any edge-case where the router isn't picked up in runtime.
