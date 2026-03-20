@@ -21,6 +21,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     { icon: Users, label: "Internships", path: "/admin/internships", active: false },
     { icon: ClipboardList, label: "Project Proposals", path: "/admin/project-proposals", active: true },
     { icon: Briefcase, label: "Projects", path: "/admin/projects", active: false },
+    { icon: BookOpen, label: "Workshops", path: "/admin/workshops", active: false },
     { icon: FileText, label: "Reports", path: "/admin/reports", active: false },
     { icon: Mail, label: "Messages", path: "/admin/messages", active: false },
   ];
