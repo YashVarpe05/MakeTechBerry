@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Menu, X, FileText, TrendingUp, Users, Briefcase, ChevronRight, Search, Filter,
   Calendar, Mail, Phone, Clock, LogOut, Trash2, CheckCircle, XCircle, Eye,
-  Building, User, Code, DollarSign, ClipboardList
+  Building, User, Code, DollarSign, ClipboardList, BookOpen
 } from "lucide-react";
 import {
   getProjects,
