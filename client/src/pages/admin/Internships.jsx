@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Users, TrendingUp, FileText, ChevronRight, Search, Filter, Calendar, Mail, Phone, MapPin, ExternalLink, Clock, LogOut, Trash2, GraduationCap, Briefcase, Calendar as CalendarIcon, Download, CheckCircle, XCircle, ClipboardList } from "lucide-react";
+import { Menu, X, Users, TrendingUp, FileText, ChevronRight, Search, Filter, Calendar, Mail, Phone, MapPin, ExternalLink, Clock, LogOut, Trash2, GraduationCap, Briefcase, Calendar as CalendarIcon, Download, CheckCircle, XCircle, ClipboardList, BookOpen } from "lucide-react";
 import { getInternships, deleteInternship, approveInternship, rejectInternship } from "../../services/admin.service.js";
 import { useToast } from "../../hooks/useToast.js";
 import Toast from "../../components/forms/Toast.jsx";
