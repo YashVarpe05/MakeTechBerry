@@ -1,176 +1,111 @@
 import api from "./api";
 
-export const adminRegister = (data) => {
-  return api.post("/auth/register", data);
-};
+// [FIXED]: Auto-inject auth token via interceptor instead of repeating in every call
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("adminToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// ========== AUTH ==========
 
 export const adminLogin = (data) => {
   return api.post("/auth/login", data);
 };
 
-export const getInternships = (token) => {
-  return api.get("/internships", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+// ========== INTERNSHIPS ==========
+
+export const getInternships = () => {
+  return api.get("/internships");
 };
 
-export const getProjects = (token) => {
-  return api.get("/projects", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteInternship = (id) => {
+  return api.delete(`/internships/${id}`);
 };
 
-export const deleteInternship = (id, token) => {
-  return api.delete(`/internships/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const approveInternship = (id) => {
+  return api.patch(`/internships/${id}/approve`);
 };
 
-export const deleteProject = (id, token) => {
-  return api.delete(`/projects/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const rejectInternship = (id) => {
+  return api.patch(`/internships/${id}/reject`);
 };
 
-export const approveInternship = (id, token) => {
-  return api.patch(`/internships/${id}/approve`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+// ========== PROJECTS ==========
+
+export const getProjects = () => {
+  return api.get("/projects");
 };
 
-export const rejectInternship = (id, token) => {
-  return api.patch(`/internships/${id}/reject`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteProject = (id) => {
+  return api.delete(`/projects/${id}`);
 };
 
-export const approveProject = (id, token) => {
-  return api.patch(`/projects/${id}/approve`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const approveProject = (id) => {
+  return api.patch(`/projects/${id}/approve`);
 };
 
-export const rejectProject = (id, token) => {
-  return api.patch(`/projects/${id}/reject`, {}, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const rejectProject = (id) => {
+  return api.patch(`/projects/${id}/reject`);
 };
 
-export const getReports = (token) => {
-  return api.get("/reports", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+// ========== REPORTS ==========
+
+export const getReports = () => {
+  return api.get("/reports");
 };
 
-export const getReportsByType = (type, token) => {
-  return api.get(`/reports/type/${type}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getReportsByType = (type) => {
+  return api.get(`/reports/type/${type}`);
 };
 
-export const getReportsByAction = (action, token) => {
-  return api.get(`/reports/action/${action}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getReportsByAction = (action) => {
+  return api.get(`/reports/action/${action}`);
 };
 
-export const deleteReport = (id, token) => {
-  return api.delete(`/reports/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteReport = (id) => {
+  return api.delete(`/reports/${id}`);
 };
 
-export const getMessages = (token) => {
-  return api.get("/messages", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+// ========== MESSAGES ==========
+
+export const getMessages = () => {
+  return api.get("/messages");
 };
 
-export const deleteMessage = (id, token) => {
-  return api.delete(`/messages/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteMessage = (id) => {
+  return api.delete(`/messages/${id}`);
 };
 
-// ========== SHOWCASE PROJECT SERVICES ==========
+// ========== SHOWCASE PROJECTS ==========
 
-export const getShowcaseProjects = (token) => {
-  return api.get("/projects/showcase", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getShowcaseProjects = () => {
+  return api.get("/projects/showcase");
 };
 
-export const getShowcaseProject = (id, token) => {
-  return api.get(`/projects/showcase/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const getShowcaseProject = (id) => {
+  return api.get(`/projects/showcase/${id}`);
 };
 
-export const createShowcaseProject = (data, token) => {
-  return api.post("/projects/showcase", data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const createShowcaseProject = (data) => {
+  return api.post("/projects/showcase", data);
 };
 
-export const updateShowcaseProject = (id, data, token) => {
-  return api.put(`/projects/showcase/${id}`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const updateShowcaseProject = (id, data) => {
+  return api.put(`/projects/showcase/${id}`, data);
 };
 
-export const deleteShowcaseProject = (id, token) => {
-  return api.delete(`/projects/showcase/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteShowcaseProject = (id) => {
+  return api.delete(`/projects/showcase/${id}`);
 };
 
-export const changeShowcaseProjectStatus = (id, status, token) => {
-  return api.patch(`/projects/showcase/${id}/status`, { status }, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const changeShowcaseProjectStatus = (id, status) => {
+  return api.patch(`/projects/showcase/${id}/status`, { status });
 };
 
-// ========== WORKSHOP SERVICES ==========
+// ========== WORKSHOPS ==========
 
 export const getWorkshops = (status = null, category = null) => {
   let url = "/workshops?";
@@ -183,26 +118,14 @@ export const getWorkshop = (id) => {
   return api.get(`/workshops/${id}`);
 };
 
-export const createWorkshop = (data, token) => {
-  return api.post("/workshops", data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const createWorkshop = (data) => {
+  return api.post("/workshops", data);
 };
 
-export const updateWorkshop = (id, data, token) => {
-  return api.put(`/workshops/${id}`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const updateWorkshop = (id, data) => {
+  return api.put(`/workshops/${id}`, data);
 };
 
-export const deleteWorkshop = (id, token) => {
-  return api.delete(`/workshops/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+export const deleteWorkshop = (id) => {
+  return api.delete(`/workshops/${id}`);
 };

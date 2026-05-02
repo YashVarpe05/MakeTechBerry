@@ -2,16 +2,9 @@ import Report from "../models/Report.model.js";
 
 export const getAllReports = async (req, res) => {
   try {
+    // [FIXED]: Removed side-effect cleanup from GET — TTL index handles expiry automatically
     const reports = await Report.find()
       .sort({ approvedAt: -1 });
-
-    // Clean up expired reports (older than 2 months)
-    const twoMonthsAgo = new Date();
-    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-    
-    await Report.deleteMany({
-      approvedAt: { $lt: twoMonthsAgo }
-    });
 
     res.status(200).json({
       success: true,
@@ -19,9 +12,10 @@ export const getAllReports = async (req, res) => {
       data: reports,
     });
   } catch (error) {
+    console.error("Get reports error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch reports.",
     });
   }
 };
@@ -46,9 +40,10 @@ export const getReportsByType = async (req, res) => {
       data: reports,
     });
   } catch (error) {
+    console.error("Get reports by type error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch reports.",
     });
   }
 };
@@ -73,9 +68,10 @@ export const getReportsByAction = async (req, res) => {
       data: reports,
     });
   } catch (error) {
+    console.error("Get reports by action error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch reports.",
     });
   }
 };
@@ -98,9 +94,10 @@ export const deleteReport = async (req, res) => {
       data: report,
     });
   } catch (error) {
+    console.error("Delete report error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to delete report.",
     });
   }
 };

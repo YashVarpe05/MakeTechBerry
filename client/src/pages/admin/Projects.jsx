@@ -150,23 +150,19 @@ const Projects = () => {
     featuredImage: ""
   });
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
 
     fetchProjects();
-  }, [token, navigate]);
+  }, [navigate]);
 
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const projectsRes = await getShowcaseProjects(token);
+      const projectsRes = await getShowcaseProjects();
       setProjects(projectsRes.data.data || []);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
@@ -224,10 +220,10 @@ const Projects = () => {
       };
 
       if (editingId) {
-        await updateShowcaseProject(editingId, dataToSend, token);
+        await updateShowcaseProject(editingId, dataToSend);
         showToast("Project updated successfully!", "success");
       } else {
-        await createShowcaseProject(dataToSend, token);
+        await createShowcaseProject(dataToSend);
         showToast("Project created successfully!", "success");
       }
 
@@ -246,7 +242,7 @@ const Projects = () => {
 
     setDeletingId(id);
     try {
-      await deleteShowcaseProject(id, token);
+      await deleteShowcaseProject(id);
       setProjects(projects.filter(project => project._id !== id));
       showToast("Project deleted successfully!", "success");
     } catch (error) {
@@ -259,7 +255,7 @@ const Projects = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await changeShowcaseProjectStatus(id, newStatus, token);
+      await changeShowcaseProjectStatus(id, newStatus);
       setProjects(projects.map(project => 
         project._id === id ? { ...project, status: newStatus } : project
       ));

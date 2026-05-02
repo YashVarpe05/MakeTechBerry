@@ -25,9 +25,10 @@ export const createMessage = async (req, res) => {
       data: newMessage,
     });
   } catch (error) {
+    console.error("Create message error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to send message. Please try again.",
     });
   }
 };
@@ -42,9 +43,10 @@ export const getMessages = async (_req, res) => {
       data: messages,
     });
   } catch (error) {
+    console.error("Get messages error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch messages.",
     });
   }
 };
@@ -67,9 +69,10 @@ export const deleteMessage = async (req, res) => {
       data: deleted,
     });
   } catch (error) {
+    console.error("Delete message error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to delete message.",
     });
   }
 };

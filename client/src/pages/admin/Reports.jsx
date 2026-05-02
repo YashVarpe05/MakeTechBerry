@@ -135,19 +135,14 @@ const Reports = () => {
   const [filterAction, setFilterAction] = useState("all");
   const [deletingId, setDeletingId] = useState(null);
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
-
     const fetchData = async () => {
       try {
-        const reportsRes = await getReports(token);
+        const reportsRes = await getReports();
         setReports(reportsRes.data.data || []);
       } catch (error) {
         console.error("Failed to fetch reports");
@@ -157,7 +152,7 @@ const Reports = () => {
     };
 
     fetchData();
-  }, [token, navigate]);
+  }, [navigate]);
 
   // Filter reports
   const filteredReports = reports.filter((report) => {
@@ -218,7 +213,7 @@ const Reports = () => {
 
     setDeletingId(id);
     try {
-      await deleteReport(id, token);
+      await deleteReport(id);
       setReports(reports.filter(report => report._id !== id));
       showToast("Report deleted successfully!", "success");
     } catch (error) {

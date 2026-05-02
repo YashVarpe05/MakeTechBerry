@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -17,13 +18,24 @@ import Messages from "./pages/admin/Messages";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Workshop from "./pages/Workshop";
+import NotFound from "./pages/NotFound";
+
+// Scroll to top on route change
+function ScrollToTop() {
+	const { pathname } = useLocation();
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [pathname]);
+	return null;
+}
 
 function AppContent() {
 	const location = useLocation();
 	const isAdminPage = location.pathname.startsWith("/admin");
 
 	return (
-		<div className={isAdminPage ? "min-h-screen" : "bg-[#E7DEFE] min-h-screen"}>
+		<div className={isAdminPage ? "min-h-screen dark:bg-slate-950 transition-colors duration-300" : "bg-[#E7DEFE] dark:bg-slate-950 min-h-screen transition-colors duration-300"}>
+			<ScrollToTop />
 			{!isAdminPage && <Navbar />}
 
 			<Routes>
@@ -91,6 +103,8 @@ function AppContent() {
 						</ProtectedRoute>
 					}
 				/>
+				{/* Catch-all 404 route */}
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 
 			{!isAdminPage && <Footer />}

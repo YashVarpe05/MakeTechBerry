@@ -34,9 +34,11 @@ export const adminLogin = async (req, res) => {
       token
     });
   } catch (error) {
+    // [FIXED]: Sanitized error — was exposing error.message to client
+    console.error("Login error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Login failed. Please try again."
     });
   }
 };

@@ -18,10 +18,10 @@ const storage = multer.diskStorage({
 });
 
 // File filter (PDF only)
+// [FIXED]: Removed application/octet-stream which bypassed PDF-only filter
 const fileFilter = (req, file, cb) => {
   if (
     file.mimetype === "application/pdf" ||
-    file.mimetype === "application/octet-stream" ||
     file.originalname.toLowerCase().endsWith(".pdf")
   ) {
     cb(null, true);
@@ -30,6 +30,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ storage, fileFilter });
+// [FIXED]: Added 5MB file size limit to prevent DoS via large uploads
+const upload = multer({ 
+  storage, 
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB max
+});
 
 export default upload;

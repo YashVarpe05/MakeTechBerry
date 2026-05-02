@@ -2,8 +2,8 @@ import { useState } from "react";
 
 export default function Hero() {
   return (
-    <div className="bg-white">
-      <div className="relative isolate px-6  lg:px-8">
+    <div className="bg-transparent pt-10">
+      <div className="relative isolate px-6 lg:px-8">
         <div
           aria-hidden="true"
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -26,21 +26,21 @@ export default function Hero() {
               <img
                 src="/character.png"
                 alt="character"
-                className="w-1/4 mx-auto"
+                className="w-1/4 mx-auto drop-shadow-xl"
               />
             </div>
-            <h1 className="text-5xl font-bold tracking-tight text-balance text-gray-900 sm:text-6xl leading-snug sm:leading-relaxed">
+            <h1 className="text-5xl font-bold tracking-tight text-balance text-gray-900 dark:text-white sm:text-6xl leading-snug sm:leading-relaxed transition-colors duration-300">
               Innovating <br /> learning  &{" "} <br />
-              <span className=" text-[#9062ff]">building digital futures</span>
+              <span className=" text-[#9062ff] dark:text-purple-400">building digital futures</span>
             </h1>
-            <p className="mt-8 text-xl font-medium text-pretty text-gray-500 sm:text-2xl/9">
-              <span className="font-bold text-gray-900">MakeTechBerry LLP</span>{" "}
+            <p className="mt-8 text-xl font-medium text-pretty text-gray-600 dark:text-gray-300 sm:text-2xl/9 transition-colors duration-300">
+              <span className="font-bold text-gray-900 dark:text-white">MakeTechBerry LLP</span>{" "}
               is a startup founded in 2025, dedicated to providing comprehensive
               training and internship programs in{" "}
-              <span className="font-bold text-gray-900">App Development</span>,{" "}
-              <span className="font-bold text-gray-900">Web Development</span>,{" "}
-              <span className="font-bold text-gray-900">Gen-AI</span>, and{" "}
-              <span className="font-bold text-gray-900">
+              <span className="font-bold text-gray-900 dark:text-white">App Development</span>,{" "}
+              <span className="font-bold text-gray-900 dark:text-white">Web Development</span>,{" "}
+              <span className="font-bold text-gray-900 dark:text-white">Gen-AI</span>, and{" "}
+              <span className="font-bold text-gray-900 dark:text-white">
                 Python Full Stack Development
               </span>
               .
@@ -48,11 +48,11 @@ export default function Hero() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
                 href="#"
-                className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="rounded-full bg-[#9062FF] px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-purple-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9062FF] transition-all hover:scale-105"
               >
                 Explore Programs
               </a>
-              <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              <a href="#" className="text-sm/6 font-semibold text-gray-900 dark:text-white hover:text-[#9062FF] dark:hover:text-purple-400 transition-colors">
                 Start Your Journey <span aria-hidden="true">→</span>
               </a>
             </div>

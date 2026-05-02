@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
 	const location = useLocation();
@@ -23,7 +24,7 @@ const Navbar = () => {
 			<nav className="max-w-7xl mx-auto px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between relative">
 				<Link
 					to="/"
-					className="flex items-center gap-2 sm:gap-3 text-xl font-semibold text-slate-900 hover:opacity-80 transition-opacity z-50"
+					className="flex items-center gap-2 sm:gap-3 text-xl font-semibold text-slate-900 dark:text-white hover:opacity-80 transition-opacity z-50"
 				>
 					<img
 						src="/images/logo.png"
@@ -33,13 +34,13 @@ const Navbar = () => {
 							e.target.src = "/images/logo-no_bg.png";
 						}}
 					/>
-					<span className="text-lg sm:text-2xl font-bold text-[#373771] tracking-tight">
+					<span className="text-lg sm:text-2xl font-bold text-[#373771] dark:text-purple-300 tracking-tight">
 						MakeTechBerry
 					</span>
 				</Link>
 
 				{/* Center Pill Navigation - Desktop */}
-				<div className="hidden lg:flex items-center gap-1 bg-white/40 backdrop-blur-md px-3 py-2 rounded-full border border-white/30 absolute left-1/2 -translate-x-1/2 transition-all duration-300 ease-out hover:scale-105 overflow-hidden">
+				<div className="hidden lg:flex items-center gap-1 bg-white/40 dark:bg-black/40 backdrop-blur-md px-3 py-2 rounded-full border border-white/30 dark:border-white/10 absolute left-1/2 -translate-x-1/2 transition-all duration-300 ease-out hover:scale-105 overflow-hidden">
 					{navItems.map((item) => {
 						const isActive =
 							currentPath === item.path ||
@@ -59,7 +60,7 @@ const Navbar = () => {
                            ${
 															shouldShowBg
 																? "bg-[#9062FF] text-white"
-																: "text-slate-700 hover:text-slate-900"
+																: "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
 														}`}
 							>
 								{item.name}
@@ -70,11 +71,12 @@ const Navbar = () => {
 
 				{/* Right Side - Desktop Admin Login & Mobile Menu Button */}
 				<div className="flex items-center gap-2 sm:gap-4 ml-auto">
+					<ThemeToggle />
 					<Link
 						to="/admin/login"
 						className="hidden sm:block px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-full border-2 border-[#9062FF]
-                       text-[#9062FF] transition-all duration-300 ease-out
-                       hover:bg-[#9062FF] hover:text-white hover:scale-105"
+                       text-[#9062FF] dark:text-purple-300 dark:border-purple-400 transition-all duration-300 ease-out
+                       hover:bg-[#9062FF] hover:text-white dark:hover:bg-purple-500 hover:scale-105"
 					>
 						Admin Login
 					</Link>

@@ -21,9 +21,10 @@ export const getWorkshops = async (req, res) => {
       data: workshops
     });
   } catch (error) {
+    console.error("Get workshops error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Failed to fetch workshops."
     });
   }
 };
@@ -46,9 +47,10 @@ export const getWorkshopById = async (req, res) => {
       data: workshop
     });
   } catch (error) {
+    console.error("Get workshop error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Failed to fetch workshop."
     });
   }
 };
@@ -56,7 +58,11 @@ export const getWorkshopById = async (req, res) => {
 // Create a new workshop (Admin only)
 export const createWorkshop = async (req, res) => {
   try {
-    const workshop = await Workshop.create(req.body);
+    // [FIXED]: Whitelist fields to prevent NoSQL injection (was: req.body)
+    const { title, category, date, duration, location, description, instructor, capacity, tags, status, image } = req.body;
+    const workshop = await Workshop.create({
+      title, category, date, duration, location, description, instructor, capacity, tags, status, image
+    });
 
     res.status(201).json({
       success: true,
@@ -64,9 +70,10 @@ export const createWorkshop = async (req, res) => {
       data: workshop
     });
   } catch (error) {
+    console.error("Create workshop error:", error.message);
     res.status(400).json({
       success: false,
-      message: error.message
+      message: "Failed to create workshop. Please check your input."
     });
   }
 };
@@ -75,9 +82,11 @@ export const createWorkshop = async (req, res) => {
 export const updateWorkshop = async (req, res) => {
   try {
     const { id } = req.params;
+    // [FIXED]: Whitelist fields to prevent NoSQL injection (was: req.body)
+    const { title, category, date, duration, location, description, instructor, capacity, tags, status, image } = req.body;
     const workshop = await Workshop.findByIdAndUpdate(
       id,
-      req.body,
+      { title, category, date, duration, location, description, instructor, capacity, tags, status, image },
       { new: true, runValidators: true }
     );
 
@@ -94,9 +103,10 @@ export const updateWorkshop = async (req, res) => {
       data: workshop
     });
   } catch (error) {
+    console.error("Update workshop error:", error.message);
     res.status(400).json({
       success: false,
-      message: error.message
+      message: "Failed to update workshop. Please check your input."
     });
   }
 };
@@ -120,9 +130,10 @@ export const deleteWorkshop = async (req, res) => {
       data: workshop
     });
   } catch (error) {
+    console.error("Delete workshop error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Failed to delete workshop."
     });
   }
 };

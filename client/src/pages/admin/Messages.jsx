@@ -145,19 +145,15 @@ const Messages = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
 
     const fetchMessages = async () => {
       try {
-        const response = await getMessages(token);
+        const response = await getMessages();
         setMessages(response.data.data || []);
       } catch (error) {
         console.error("Failed to fetch messages", error);
@@ -167,7 +163,7 @@ const Messages = () => {
     };
 
     fetchMessages();
-  }, [token, navigate]);
+  }, [navigate]);
 
   const filteredMessages = messages.filter((msg) => {
     const term = searchTerm.toLowerCase();
@@ -199,7 +195,7 @@ const Messages = () => {
 
     setDeletingId(id);
     try {
-      await deleteMessage(id, token);
+      await deleteMessage(id);
       setMessages((prev) => prev.filter((msg) => msg._id !== id));
       showToast("Message deleted successfully!", "success");
     } catch (error) {

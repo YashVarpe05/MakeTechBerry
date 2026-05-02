@@ -1,4 +1,5 @@
 import Internship from "../models/Internship.model.js";
+import Report from "../models/Report.model.js";
 
 export const registerInternship = async (req, res) => {
   try {
@@ -10,8 +11,16 @@ export const registerInternship = async (req, res) => {
       });
     }
 
+    // [FIXED]: Whitelist fields to prevent NoSQL injection (was: ...req.body)
+    const { fullName, email, phone, domain, duration, college } = req.body;
+
     const internship = await Internship.create({
-      ...req.body,
+      fullName,
+      email,
+      phone,
+      domain,
+      duration,
+      college,
       resume: req.file.path,
     });
 
@@ -24,7 +33,7 @@ export const registerInternship = async (req, res) => {
     console.error("Internship registration error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Registration failed. Please try again.",
+      message: "Registration failed. Please try again.",
     });
   }
 };
@@ -37,9 +46,10 @@ export const getAllInternships = async (req, res) => {
       data: internships,
     });
   } catch (error) {
+    console.error("Get internships error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch internships.",
     });
   }
 };
@@ -57,7 +67,6 @@ export const deleteInternship = async (req, res) => {
     }
 
     // Also delete related reports
-    const Report = (await import("../models/Report.model.js")).default;
     await Report.deleteMany({ 
       type: "Internship",
       originalId: id 
@@ -69,9 +78,10 @@ export const deleteInternship = async (req, res) => {
       data: internship,
     });
   } catch (error) {
+    console.error("Delete internship error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to delete internship.",
     });
   }
 };
@@ -93,7 +103,6 @@ export const approveInternship = async (req, res) => {
     }
 
     // Create report entry
-    const Report = (await import("../models/Report.model.js")).default;
     await Report.create({
       type: "Internship",
       action: "Approved",
@@ -107,9 +116,10 @@ export const approveInternship = async (req, res) => {
       data: internship,
     });
   } catch (error) {
+    console.error("Approve internship error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to approve internship.",
     });
   }
 };
@@ -131,7 +141,6 @@ export const rejectInternship = async (req, res) => {
     }
 
     // Create report entry
-    const Report = (await import("../models/Report.model.js")).default;
     await Report.create({
       type: "Internship",
       action: "Rejected",
@@ -145,9 +154,10 @@ export const rejectInternship = async (req, res) => {
       data: internship,
     });
   } catch (error) {
+    console.error("Reject internship error:", error.message);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to reject internship.",
     });
   }
 };

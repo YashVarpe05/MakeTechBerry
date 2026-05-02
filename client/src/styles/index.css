@@ -8,13 +8,13 @@
 @variant dark (&:where(.dark, .dark *));
 
 body {
-  background-color: #E7DEFE;
+  @apply bg-[#E7DEFE] dark:bg-slate-950 transition-colors duration-300;
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
 }
 
 #root {
-  background-color: #E7DEFE;
+  @apply bg-[#E7DEFE] dark:bg-slate-950 transition-colors duration-300;
   min-height: 100vh;
 }
 

@@ -153,17 +153,14 @@ const AdminWorkshops = () => {
     image: ""
   });
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
+
     fetchWorkshops();
-  }, [token, navigate]);
+  }, [navigate]);
 
   const fetchWorkshops = async () => {
     try {
@@ -234,10 +231,10 @@ const AdminWorkshops = () => {
       };
 
       if (editingId) {
-        await updateWorkshop(editingId, dataToSend, token);
+        await updateWorkshop(editingId, dataToSend);
         showToast("Workshop updated successfully!", "success");
       } else {
-        await createWorkshop(dataToSend, token);
+        await createWorkshop(dataToSend);
         showToast("Workshop created successfully!", "success");
       }
 
@@ -256,7 +253,7 @@ const AdminWorkshops = () => {
 
     setDeletingId(id);
     try {
-      await deleteWorkshop(id, token);
+      await deleteWorkshop(id);
       setWorkshops(workshops.filter(w => w._id !== id));
       showToast("Workshop deleted successfully!", "success");
     } catch (error) {

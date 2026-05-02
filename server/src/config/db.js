@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  console.log("DEBUG MONGO_URI =", process.env.MONGO_URI);
-
+  // [FIXED]: Removed debug log that leaked MONGO_URI with credentials
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB Connected ✅");

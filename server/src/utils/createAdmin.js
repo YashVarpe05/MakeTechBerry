@@ -5,15 +5,23 @@ import Admin from "../models/Admin.model.js";
 
 dotenv.config();
 
+// [FIXED]: Removed hardcoded credentials — now uses environment variables
 const createAdmin = async () => {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+
+  if (!email || !password) {
+    console.error("❌ ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env");
+    process.exit(1);
+  }
+
   try {
     await mongoose.connect(process.env.MONGO_URI);
 
-    // 👇 your password
-    const hashedPassword = await bcrypt.hash("Lok22rk+", 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await Admin.create({
-      email: "leafycloud57@gmail.com",
+      email,
       password: hashedPassword
     });
 
@@ -26,3 +34,4 @@ const createAdmin = async () => {
 };
 
 createAdmin();
+

@@ -139,23 +139,19 @@ const ProjectProposals = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [processingId, setProcessingId] = useState(null);
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
 
     fetchProposals();
-  }, [token, navigate]);
+  }, [navigate]);
 
   const fetchProposals = async () => {
     try {
       setLoading(true);
-      const proposalsRes = await getProjects(token);
+      const proposalsRes = await getProjects();
       setProposals(proposalsRes.data.data || []);
     } catch (error) {
       console.error("Failed to fetch proposals:", error);
@@ -168,7 +164,7 @@ const ProjectProposals = () => {
   const handleApprove = async (id) => {
     setProcessingId(id);
     try {
-      await approveProject(id, token);
+      await approveProject(id);
       setProposals(proposals.map(proposal =>
         proposal._id === id ? { ...proposal, status: "Approved" } : proposal
       ));
@@ -184,7 +180,7 @@ const ProjectProposals = () => {
   const handleReject = async (id) => {
     setProcessingId(id);
     try {
-      await rejectProject(id, token);
+      await rejectProject(id);
       setProposals(proposals.map(proposal =>
         proposal._id === id ? { ...proposal, status: "Rejected" } : proposal
       ));
@@ -204,7 +200,7 @@ const ProjectProposals = () => {
 
     setDeletingId(id);
     try {
-      await deleteProject(id, token);
+      await deleteProject(id);
       setProposals(proposals.filter(proposal => proposal._id !== id));
       showToast("Project proposal deleted successfully!", "success");
     } catch (error) {

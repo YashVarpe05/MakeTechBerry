@@ -135,13 +135,13 @@ const Dashboard = () => {
   const [filterDomain, setFilterDomain] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  const token = localStorage.getItem("adminToken");
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const internshipsRes = await getInternships(token);
-        const projectsRes = await getProjects(token);
+        const internshipsRes = await getInternships();
+        const projectsRes = await getProjects();
 
         setInternships(internshipsRes.data.data);
         setProjects(projectsRes.data.data);
@@ -153,7 +153,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [token]);
+  }, []);
 
   // Filter internships
   const filteredInternships = internships.filter((intern) => {

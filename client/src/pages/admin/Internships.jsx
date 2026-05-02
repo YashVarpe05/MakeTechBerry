@@ -136,19 +136,15 @@ const Internships = () => {
   const [deletingId, setDeletingId] = useState(null);
   const [processingId, setProcessingId] = useState(null);
 
-  const token = localStorage.getItem("adminToken");
+
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/admin/login");
-      return;
-    }
 
     const fetchData = async () => {
       try {
-        const internshipsRes = await getInternships(token);
+        const internshipsRes = await getInternships();
         setInternships(internshipsRes.data.data || []);
       } catch (error) {
         console.error("Failed to fetch internships");
@@ -158,7 +154,7 @@ const Internships = () => {
     };
 
     fetchData();
-  }, [token, navigate]);
+  }, [navigate]);
 
   // Filter internships
   const filteredInternships = internships.filter((intern) => {
@@ -190,7 +186,7 @@ const Internships = () => {
 
     setDeletingId(id);
     try {
-      await deleteInternship(id, token);
+      await deleteInternship(id);
       setInternships(internships.filter(intern => intern._id !== id));
       showToast("Internship deleted successfully!", "success");
     } catch (error) {
@@ -209,7 +205,7 @@ const Internships = () => {
 
     setProcessingId(id);
     try {
-      await approveInternship(id, token);
+      await approveInternship(id);
       setInternships(internships.map(intern => 
         intern._id === id ? { ...intern, status: "Approved" } : intern
       ));
@@ -230,7 +226,7 @@ const Internships = () => {
 
     setProcessingId(id);
     try {
-      await rejectInternship(id, token);
+      await rejectInternship(id);
       setInternships(internships.map(intern => 
         intern._id === id ? { ...intern, status: "Rejected" } : intern
       ));
