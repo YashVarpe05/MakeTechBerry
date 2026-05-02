@@ -26,6 +26,21 @@ const Sidebar = () => {
         <Link to="/admin/projects" className="block hover:text-indigo-600">
           Projects
         </Link>
+        <Link to="/admin/project-proposals" className="block hover:text-indigo-600">
+          Project Proposals
+        </Link>
+        <Link to="/admin/workshops" className="block hover:text-indigo-600">
+          Workshops
+        </Link>
+        <Link to="/admin/reports" className="block hover:text-indigo-600">
+          Reports
+        </Link>
+        <Link to="/admin/messages" className="block hover:text-indigo-600">
+          Messages
+        </Link>
+        <Link to="/admin/blogs" className="block hover:text-indigo-600">
+          Blogs & Case Studies
+        </Link>
 
         <button
           onClick={handleLogout}

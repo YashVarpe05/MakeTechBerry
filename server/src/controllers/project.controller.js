@@ -1,6 +1,7 @@
 import Project from "../models/Project.model.js";
 import ShowcaseProject from "../models/ShowcaseProject.model.js";
 import Report from "../models/Report.model.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const registerProject = async (req, res) => {
   try {
@@ -9,6 +10,44 @@ export const registerProject = async (req, res) => {
     const project = await Project.create({
       companyName, contactPerson, email, phone, projectTitle, projectDescription, techStack, budget, timeline
     });
+
+    // Send confirmation email to the client
+    await sendEmail({
+      email: email,
+      subject: `Project Proposal Received: ${projectTitle}`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #9062FF;">Hello ${contactPerson},</h2>
+          <p>Thank you for trusting MakeTechBerry with your project: <strong>${projectTitle}</strong>.</p>
+          <p>We have received your proposal and our team will be reviewing your requirements shortly to prepare an initial consultation or estimate.</p>
+          <p>We will be in touch with you very soon!</p>
+          <br/>
+          <p>Best regards,</p>
+          <p><strong>MakeTechBerry Sales Team</strong></p>
+        </div>
+      `,
+    });
+
+    // Send notification to Admin
+    if (process.env.SMTP_USER) {
+      await sendEmail({
+        email: process.env.SMTP_USER,
+        subject: `New Project Proposal: ${companyName} - ${projectTitle}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #9062FF;">New Project Proposal</h2>
+            <p><strong>Company:</strong> ${companyName}</p>
+            <p><strong>Contact Person:</strong> ${contactPerson}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Project Title:</strong> ${projectTitle}</p>
+            <p><strong>Budget:</strong> ${budget}</p>
+            <p><strong>Timeline:</strong> ${timeline}</p>
+            <p><strong>Description:</strong><br/>${projectDescription}</p>
+          </div>
+        `,
+      });
+    }
 
     res.status(201).json({
       success: true,

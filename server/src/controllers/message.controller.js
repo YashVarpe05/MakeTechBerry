@@ -1,4 +1,5 @@
 import Message from "../models/Message.model.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const createMessage = async (req, res) => {
   try {
@@ -18,6 +19,39 @@ export const createMessage = async (req, res) => {
       subject,
       message,
     });
+
+    // Send auto-reply to the user
+    await sendEmail({
+      email: email,
+      subject: `MakeTechBerry: We received your message about "${subject}"`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #9062FF;">Hello ${fullName},</h2>
+          <p>Thank you for reaching out to MakeTechBerry! This is an automated email to confirm that we have received your message regarding <strong>${subject}</strong>.</p>
+          <p>Our team is reviewing your inquiry and will get back to you as soon as possible.</p>
+          <br/>
+          <p>Best regards,</p>
+          <p><strong>The MakeTechBerry Team</strong></p>
+        </div>
+      `,
+    });
+
+    // Send notification to Admin (Assuming SMTP_USER is the admin email)
+    if (process.env.SMTP_USER) {
+      await sendEmail({
+        email: process.env.SMTP_USER,
+        subject: `New Contact Form Submission: ${subject}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #9062FF;">New Contact Request</h2>
+            <p><strong>Name:</strong> ${fullName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Message:</strong><br/>${message}</p>
+          </div>
+        `,
+      });
+    }
 
     res.status(201).json({
       success: true,

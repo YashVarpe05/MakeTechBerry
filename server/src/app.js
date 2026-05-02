@@ -9,6 +9,7 @@ import projectRoutes from "./routes/project.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import workshopRoutes from "./routes/workshop.routes.js";
+import blogRoutes from "./routes/blog.routes.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.routes.js";
@@ -66,6 +67,7 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/workshops", workshopRoutes);
 // [FIXED]: Removed duplicate manual message route wiring (was causing shadowing)
 app.use("/api/messages", messageRoutes);
+app.use("/api/blogs", blogRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/auth", authRoutes);
 

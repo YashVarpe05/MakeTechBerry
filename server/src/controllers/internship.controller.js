@@ -1,5 +1,6 @@
 import Internship from "../models/Internship.model.js";
 import Report from "../models/Report.model.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const registerInternship = async (req, res) => {
   try {
@@ -23,6 +24,42 @@ export const registerInternship = async (req, res) => {
       college,
       resume: req.file.path,
     });
+
+    // Send welcome/confirmation email to the applicant
+    await sendEmail({
+      email: email,
+      subject: `Application Received: ${domain} Internship at MakeTechBerry`,
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+          <h2 style="color: #9062FF;">Hi ${fullName},</h2>
+          <p>Thank you for applying for the <strong>${domain} Internship (${duration})</strong> at MakeTechBerry!</p>
+          <p>We have successfully received your application and resume. Our recruitment team will review your profile and get back to you with the next steps shortly.</p>
+          <p>Stay tuned!</p>
+          <br/>
+          <p>Best regards,</p>
+          <p><strong>MakeTechBerry Recruitment Team</strong></p>
+        </div>
+      `,
+    });
+
+    // Send notification to Admin
+    if (process.env.SMTP_USER) {
+      await sendEmail({
+        email: process.env.SMTP_USER,
+        subject: `New Internship Application: ${fullName} - ${domain}`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+            <h2 style="color: #9062FF;">New Internship Application</h2>
+            <p><strong>Name:</strong> ${fullName}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Phone:</strong> ${phone}</p>
+            <p><strong>Domain:</strong> ${domain}</p>
+            <p><strong>Duration:</strong> ${duration}</p>
+            <p><strong>College:</strong> ${college}</p>
+          </div>
+        `,
+      });
+    }
 
     res.status(201).json({
       success: true,

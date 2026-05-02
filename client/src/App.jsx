@@ -19,6 +19,9 @@ import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Workshop from "./pages/Workshop";
 import NotFound from "./pages/NotFound";
+import Blogs from "./pages/Blogs";
+import BlogDetail from "./pages/BlogDetail";
+import AdminBlogs from "./pages/admin/AdminBlogs";
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -46,6 +49,8 @@ function AppContent() {
 				<Route path="/about" element={<About />} />
 				<Route path="/workshop" element={<Workshop />} />
 				<Route path="/contact" element={<Contact />} />
+				<Route path="/blogs" element={<Blogs />} />
+				<Route path="/blogs/:slug" element={<BlogDetail />} />
 				<Route path="/admin/login" element={<Login />} />
 				<Route
 					path="/admin/dashboard"
@@ -92,6 +97,14 @@ function AppContent() {
 					element={
 						<ProtectedRoute>
 							<Reports />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/admin/blogs"
+					element={
+						<ProtectedRoute>
+							<AdminBlogs />
 						</ProtectedRoute>
 					}
 				/>
